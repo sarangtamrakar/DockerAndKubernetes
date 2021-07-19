@@ -1,0 +1,41 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "yes1name"
+  namespace: "default"
+  labels:
+    app: "yes1name"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "yes1name"
+  template:
+    metadata:
+      labels:
+        app: "yes1name"
+    spec:
+      containers:
+      - name: "sentimentapp-sha256-1"
+        image: "gcr.io/sentiment-analysis-317008/sentimentapp@sha256:42cc396f08b6ed41809724dc83b5813fd368236b3e3237c096c01f3448eea1f4"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "yes1name-hpa-wjhp"
+  namespace: "default"
+  labels:
+    app: "yes1name"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "yes1name"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80
